@@ -33,7 +33,8 @@
                         "CanGetRoles",
                         "CanReadAssets",
                         "CanRemoveSignatory",
-                        "CanSetQuorum"
+                        "CanSetQuorum",
+			"CanAddAssetQuantity"
                     ]
                 },
                 {

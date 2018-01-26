@@ -7,7 +7,8 @@
 #
 
 # Change localhost to Iroha's real IP address
-IROHA_HOST=localhost:50051
+## IROHA_HOST=localhost:50051
+IROHA_HOST=45.76.129.38:50051
 
 ADMIN_ID=admin@test
 DOMAIN_ID=iroha
@@ -42,23 +43,27 @@ send ${ADMIN_ID} CreateAsset --asset_name ${ASSET_NAME} --domain_id ${DOMAIN_ID}
 
 send ${ADMIN_ID} GetAssetInfo --asset_id ${ASSET_NAME}#${DOMAIN_ID}
 
+send ${ADMIN_ID} AddAssetQuantity --account_id ${ADMIN_ID} --asset_id ${ASSET_ID} --amount 1000
+
+send ${ADMIN_ID} GetAccountAssets --account_id ${ADMIN_ID} --asset_id ${ASSET_ID}
+
 send ${ADMIN_ID} CreateAccount --account_name ${USER1_NAME} --domain_id ${DOMAIN_ID}
 
 send ${ADMIN_ID} GetAccount --account_id ${USER1_ID}
+
+send ${ADMIN_ID} TransferAsset --src_account_id ${ADMIN_ID} --dest_account_id ${USER1_ID} --asset_id ${ASSET_ID} --description Transfer_Asset --amount 200
+
+send ${USER1_ID} GetAccountAssets --account_id ${USER1_ID} --asset_id ${ASSET_ID}
 
 send ${ADMIN_ID} CreateAccount --account_name ${USER2_NAME} --domain_id ${DOMAIN_ID}
 
 send ${ADMIN_ID} GetAccount --account_id ${USER2_ID}
 
-send ${ADMIN_ID} AddAssetQuantity --account_id ${USER1_ID} --asset_id ${ASSET_ID} --amount 200
-
-send ${USER1_ID} GetAccountAssets --account_id ${USER1_ID} --asset_id ${ASSET_ID}
-
-send ${ADMIN_ID} AddAssetQuantity --account_id ${USER2_ID} --asset_id ${ASSET_ID} --amount 100
+send ${ADMIN_ID} TransferAsset --src_account_id ${ADMIN_ID} --dest_account_id ${USER2_ID} --asset_id ${ASSET_ID} --description Transfer_Asset --amount 100
 
 send ${USER2_ID} GetAccountAssets --account_id ${USER2_ID} --asset_id ${ASSET_ID}
 
-send ${ADMIN_ID} TransferAsset --src_account_id ${USER2_ID} --dest_account_id ${USER1_ID} --asset_id ${ASSET_ID} --description Transfer_Asset --amount 20
+send ${USER2_ID} TransferAsset --src_account_id ${USER2_ID} --dest_account_id ${USER1_ID} --asset_id ${ASSET_ID} --description Transfer_Asset --amount 20
 
 send ${USER1_ID} GetAccountAssets --account_id ${USER1_ID} --asset_id ${ASSET_ID}
 send ${USER2_ID} GetAccountAssets --account_id ${USER2_ID} --asset_id ${ASSET_ID}

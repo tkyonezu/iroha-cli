@@ -7,8 +7,7 @@
 #
 
 # Change localhost to Iroha's real IP address
-## IROHA_HOST=localhost:50051
-IROHA_HOST=45.76.129.38:50051
+IROHA_HOST=localhost:50051
 
 ADMIN_ID=admin@test
 DOMAIN_ID=iroha

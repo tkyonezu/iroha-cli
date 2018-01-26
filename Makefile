@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-.PHONY: all test
+.PHONY: all up down logs test
 
 UKERNEL := $(shell uname -s)
 UMACHINE := $(shell uname -m)
@@ -21,10 +21,12 @@ ifeq ($(UKERNEL),Linux)
   ifeq ($(UMACHINE),x86_64)
     PROJECT := hyperledger
     DOCKER := Dockerfile
+    COMPOSE := docker-compose.yml
   endif
   ifeq ($(UMACHINE),armv7l)
     PROJECT := arm32v7
     DOCKER := Dockerfile.arm32v7
+    COMPOSE := docker-compose-arm32v7.yml
   endif
 endif
 
@@ -39,6 +41,23 @@ endif
 
 all:
 	cd docker; docker build --rm -t $(PROJECT)/irohac -f $(DOCKER) .
+
+help:
+	@echo "help          - show make targets"
+	@echo "all (default) - buid iroha-dev container, and build iroha"
+	@echo "up            - running iroha container by docker-compose"
+	@echo "down          - stop and remove iroha container by docker-compose"
+	@echo "test          - exec test commands"
+	@echo "logs          - show logs of iroha_node_1 container"
+
+up:
+	cd example; env COMPOSE_PROJECT_NAME=iroha docker-compose -p iroha -f $(COMPOSE) up -d
+
+down:
+	cd example; env COMPOSE_PROJECT_NAME=iroha docker-compose -p iroha -f $(COMPOSE) down
+
+logs:
+	docker logs -f iroha_node_1
 
 test:
 	cd example; bash test.sh

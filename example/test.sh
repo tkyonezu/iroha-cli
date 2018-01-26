@@ -8,7 +8,15 @@
 
 # Change localhost to Iroha's real IP address
 IROHA_HOST=localhost:50051
-CREATOR_ID=admin@test
+
+ADMIN_ID=admin@test
+DOMAIN_ID=iroha
+ASSET_NAME=usd
+ASSET_ID=${ASSET_NAME}#${DOMAIN_ID}
+USER1_NAME=alice
+USER1_ID=${USER1_NAME}@${DOMAIN_ID}
+USER2_NAME=bob
+USER2_ID=${USER2_NAME}@${DOMAIN_ID}
 
 if [ "$(uname -m)" = "armv7l" ]; then
   PROJECT=arm32v7
@@ -20,34 +28,39 @@ function send {
   echo "=== $* ==="
   read junk
 
+  CREATOR_ID=$1
+  shift
+
   docker run -t --rm --name irohac -v $(pwd):/root/.irohac ${PROJECT}/irohac irohac --hostname=${IROHA_HOST} --account_id=${CREATOR_ID} $*
 }
 
-send CreateDomain --default_role user --domain_id iroha
+rm -f ${USER1_ID}* ${USER2_ID}*
 
-send CreateAsset --asset_name usd --domain_id iroha
+send ${ADMIN_ID} CreateDomain --default_role user --domain_id ${DOMAIN_ID}
 
-send GetAssetInfo --asset_id usd#iroha
+send ${ADMIN_ID} CreateAsset --asset_name ${ASSET_NAME} --domain_id ${DOMAIN_ID}
 
-send CreateAccount --account_name alice --domain_id iroha --main_pubkey 359f925e4eeecfdd6aa1abc0b79a6a121a5dd63bb612b603247ea4f8ad160156
+send ${ADMIN_ID} GetAssetInfo --asset_id ${ASSET_NAME}#${DOMAIN_ID}
 
-send GetAccount --account_id alice@iroha
+send ${ADMIN_ID} CreateAccount --account_name ${USER1_NAME} --domain_id ${DOMAIN_ID}
 
-send CreateAccount --account_name bob --domain_id iroha --main_pubkey 59f925e4eeecfdd6aa1abc0b79a6a121a5dd63bb612b603247ea4f8ad160156
+send ${ADMIN_ID} GetAccount --account_id ${USER1_ID}
 
-send GetAccount --account_id bob@iroha
+send ${ADMIN_ID} CreateAccount --account_name ${USER2_NAME} --domain_id ${DOMAIN_ID}
 
-send AddAssetQuantity --account_id alice@iroha --asset_id usd#iroha --amount 200
+send ${ADMIN_ID} GetAccount --account_id ${USER2_ID}
 
-send GetAccountAssets --account_id alice@iroha --asset_id usd#iroha
+send ${ADMIN_ID} AddAssetQuantity --account_id ${USER1_ID} --asset_id ${ASSET_ID} --amount 200
 
-send AddAssetQuantity --account_id bob@iroha --asset_id usd#iroha --amount 100
+send ${USER1_ID} GetAccountAssets --account_id ${USER1_ID} --asset_id ${ASSET_ID}
 
-send GetAccountAssets --account_id bob@iroha --asset_id usd#iroha
+send ${ADMIN_ID} AddAssetQuantity --account_id ${USER2_ID} --asset_id ${ASSET_ID} --amount 100
 
-send TransferAsset --src_account_id bob@iroha --dest_account_id alice@iroha --asset_id usd#iroha --description Transfer_Asset --amount 20
+send ${USER2_ID} GetAccountAssets --account_id ${USER2_ID} --asset_id ${ASSET_ID}
 
-send GetAccountAssets --account_id alice@iroha --asset_id usd#iroha
-send GetAccountAssets --account_id bob@iroha --asset_id usd#iroha
+send ${ADMIN_ID} TransferAsset --src_account_id ${USER2_ID} --dest_account_id ${USER1_ID} --asset_id ${ASSET_ID} --description Transfer_Asset --amount 20
+
+send ${USER1_ID} GetAccountAssets --account_id ${USER1_ID} --asset_id ${ASSET_ID}
+send ${USER2_ID} GetAccountAssets --account_id ${USER2_ID} --asset_id ${ASSET_ID}
 
 exit 0

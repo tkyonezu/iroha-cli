@@ -33,6 +33,7 @@ endif
 ifeq ($(UKERNEL),Darwin)
   PROJECT := hyperledger
   DOCKER := Dockerfile
+  COMPOSE := docker-compose.yml
 endif
 
 ifeq ($(DOCKER), )

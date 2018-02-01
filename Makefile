@@ -14,6 +14,8 @@
 
 .PHONY: all up down logs test
 
+COMPOSE_PROJECT_NAME := $(shell grep COMPOSE_PROJECT_NAME example/.env | cut -d'=' -f2)
+
 UKERNEL := $(shell uname -s)
 UMACHINE := $(shell uname -m)
 
@@ -52,10 +54,10 @@ help:
 	@echo "logs          - show logs of iroha_node_1 container"
 
 up:
-	cd example; env COMPOSE_PROJECT_NAME=iroha docker-compose -p iroha -f $(COMPOSE) up -d
+	cd example; docker-compose -p $(COMPOSE_PROJECT_NAME) -f $(COMPOSE) up -d
 
 down:
-	cd example; env COMPOSE_PROJECT_NAME=iroha docker-compose -p iroha -f $(COMPOSE) down
+	cd example; docker-compose -p $(COMPOSE_PROJECT_NAME)  -f $(COMPOSE) down
 
 logs:
 	docker logs -f iroha_node_1

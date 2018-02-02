@@ -1,1 +1,4 @@
 !.env
+/block_store/
+alice@*
+bob@*

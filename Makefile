@@ -67,5 +67,8 @@ down4:
 logs:
 	docker logs -f iroha_node_1
 
+logs4:
+	cd example/node4; bash logs4.sh
+
 test:
 	cd example; bash test.sh

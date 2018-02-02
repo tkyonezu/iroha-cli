@@ -59,6 +59,11 @@ up:
 down:
 	cd example; docker-compose -p $(COMPOSE_PROJECT_NAME)  -f $(COMPOSE) down
 
+up4:
+	cd example/node4; docker-compose -p $(COMPOSE_PROJECT_NAME) -f $(COMPOSE) up -d
+down4:
+	cd example/node4; docker-compose -p $(COMPOSE_PROJECT_NAME)  -f $(COMPOSE) down
+
 logs:
 	docker logs -f iroha_node_1
 

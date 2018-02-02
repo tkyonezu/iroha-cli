@@ -28,8 +28,8 @@ services:
   postgres:
     image: arm32v7/postgres:9.5
     environment:
-      - POSTGRES_USER=postgres
-      - IROHA_POSTGRES_PASSWORD=HelloW0rld
+      - POSTGRES_USER=iroha
+      - POSTGRES_PASSWORD=HelloW0rld
     depends_on:
       - redis
 

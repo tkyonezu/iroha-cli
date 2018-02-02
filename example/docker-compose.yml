@@ -14,8 +14,14 @@ services:
       - CCACHE_DIR=/tmp/ccache
     volumes:
       - .:/opt/iroha/config
+      - ./block_store:/tmp/block_store
       - ccache-data:/tmp/ccache
     working_dir: /opt/iroha
+    command: >
+      bash -c "sleep 5;
+      /opt/iroha/bin/irohad --config config/iroha.conf
+      --genesis_block config/genesis.block
+      --keypair_name config/node0"
     depends_on:
       - redis
       - postgres
@@ -23,8 +29,8 @@ services:
   postgres:
     image: postgres:9.5
     environment:
-      - POSTGRES_USER=postgres
-      - IROHA_POSTGRES_PASSWORD=HelloW0rld
+      - POSTGRES_USER=iroha
+      - POSTGRES_PASSWORD=HelloW0rld
     depends_on:
       - redis
 

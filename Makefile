@@ -61,6 +61,7 @@ down:
 
 up4:
 	cd example/node4; docker-compose -p $(COMPOSE_PROJECT_NAME) -f $(COMPOSE) up -d
+
 down4:
 	cd example/node4; docker-compose -p $(COMPOSE_PROJECT_NAME)  -f $(COMPOSE) down
 

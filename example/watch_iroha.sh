@@ -6,7 +6,13 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-INSTANCE_NO=4
+
+if [ $# -ge 1 ]; then
+  INSTANCE_NO=$1
+else
+  INSTANCE_NO=${INSTANCE_NO:-4}
+fi
+
 WATCH_INTERVAL=3
 
 PROJECT=$(grep COMPOSE_PROJECT_NAME .env | cut -d'=' -f2)

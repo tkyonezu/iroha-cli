@@ -14,6 +14,7 @@ services:
       - CCACHE_DIR=/tmp/ccache
     volumes:
       - .:/opt/iroha/config
+      - ./block_store:/tmp/block_store
       - ccache-data:/tmp/ccache
     working_dir: /opt/iroha
     command: >

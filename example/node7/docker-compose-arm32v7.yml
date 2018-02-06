@@ -1,0 +1,221 @@
+# Copyright Takeshi Yonezu. All Rights Reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+version: '3'
+
+services:
+
+  node1:
+    image: arm32v7/${IROHA_IMG}
+    ports:
+      - "50051:50051"
+    environment:
+      - CCACHE_DIR=/tmp/ccache
+    volumes:
+      - .:/opt/iroha/config
+      - ./block_store1:/tmp/block_store
+      - ccache-data:/tmp/ccache
+    working_dir: /opt/iroha
+    command: >
+      bash -c "sleep 5;
+      /opt/iroha/bin/irohad --config config/iroha1.conf
+      --genesis_block config/genesis.block
+      --keypair_name config/node1"
+    depends_on:
+      - postgres1
+
+  node2:
+    image: arm32v7/${IROHA_IMG}
+    environment:
+      - CCACHE_DIR=/tmp/ccache
+    volumes:
+      - .:/opt/iroha/config
+      - ./block_store2:/tmp/block_store
+      - ccache-data:/tmp/ccache
+    working_dir: /opt/iroha
+    command: >
+      bash -c "sleep 5;
+      /opt/iroha/bin/irohad --config config/iroha2.conf
+      --genesis_block config/genesis.block
+      --keypair_name config/node2"
+    depends_on:
+      - postgres2
+
+  node3:
+    image: arm32v7/${IROHA_IMG}
+    environment:
+      - CCACHE_DIR=/tmp/ccache
+    volumes:
+      - .:/opt/iroha/config
+      - ./block_store3:/tmp/block_store
+      - ccache-data:/tmp/ccache
+    working_dir: /opt/iroha
+    command: >
+      bash -c "sleep 5;
+      /opt/iroha/bin/irohad --config config/iroha3.conf
+      --genesis_block config/genesis.block
+      --keypair_name config/node3"
+    depends_on:
+      - postgres3
+
+  node4:
+    image: arm32v7/${IROHA_IMG}
+    environment:
+      - CCACHE_DIR=/tmp/ccache
+    volumes:
+      - .:/opt/iroha/config
+      - ./block_store4:/tmp/block_store
+      - ccache-data:/tmp/ccache
+    working_dir: /opt/iroha
+    command: >
+      bash -c "sleep 5;
+      /opt/iroha/bin/irohad --config config/iroha4.conf
+      --genesis_block config/genesis.block
+      --keypair_name config/node4"
+    depends_on:
+      - postgres4
+
+  node5:
+    image: arm32v7/${IROHA_IMG}
+    environment:
+      - CCACHE_DIR=/tmp/ccache
+    volumes:
+      - .:/opt/iroha/config
+      - ./block_store5:/tmp/block_store
+      - ccache-data:/tmp/ccache
+    working_dir: /opt/iroha
+    command: >
+      bash -c "sleep 5;
+      /opt/iroha/bin/irohad --config config/iroha5.conf
+      --genesis_block config/genesis.block
+      --keypair_name config/node5"
+    depends_on:
+      - postgres5
+
+  node6:
+    image: arm32v7/${IROHA_IMG}
+    environment:
+      - CCACHE_DIR=/tmp/ccache
+    volumes:
+      - .:/opt/iroha/config
+      - ./block_store6:/tmp/block_store
+      - ccache-data:/tmp/ccache
+    working_dir: /opt/iroha
+    command: >
+      bash -c "sleep 5;
+      /opt/iroha/bin/irohad --config config/iroha6.conf
+      --genesis_block config/genesis.block
+      --keypair_name config/node6"
+    depends_on:
+      - postgres6
+
+  node7:
+    image: arm32v7/${IROHA_IMG}
+    environment:
+      - CCACHE_DIR=/tmp/ccache
+    volumes:
+      - .:/opt/iroha/config
+      - ./block_store7:/tmp/block_store
+      - ccache-data:/tmp/ccache
+    working_dir: /opt/iroha
+    command: >
+      bash -c "sleep 5;
+      /opt/iroha/bin/irohad --config config/iroha7.conf
+      --genesis_block config/genesis.block
+      --keypair_name config/node7"
+    depends_on:
+      - postgres7
+
+  postgres1:
+    image: arm32v7/postgres:9.5
+    environment:
+      - POSTGRES_USER=iroha
+      - POSTGRES_PASSWORD=HelloW0rld
+    depends_on:
+      - redis1
+
+  postgres2:
+    image: arm32v7/postgres:9.5
+    environment:
+      - POSTGRES_USER=iroha
+      - POSTGRES_PASSWORD=HelloW0rld
+    depends_on:
+      - redis2
+
+  postgres3:
+    image: arm32v7/postgres:9.5
+    environment:
+      - POSTGRES_USER=iroha
+      - POSTGRES_PASSWORD=HelloW0rld
+    depends_on:
+      - redis3
+
+  postgres4:
+    image: arm32v7/postgres:9.5
+    environment:
+      - POSTGRES_USER=iroha
+      - POSTGRES_PASSWORD=HelloW0rld
+    depends_on:
+      - redis4
+
+  postgres5:
+    image: arm32v7/postgres:9.5
+    environment:
+      - POSTGRES_USER=iroha
+      - POSTGRES_PASSWORD=HelloW0rld
+    depends_on:
+      - redis5
+
+  postgres6:
+    image: arm32v7/postgres:9.5
+    environment:
+      - POSTGRES_USER=iroha
+      - POSTGRES_PASSWORD=HelloW0rld
+    depends_on:
+      - redis6
+
+  postgres7:
+    image: arm32v7/postgres:9.5
+    environment:
+      - POSTGRES_USER=iroha
+      - POSTGRES_PASSWORD=HelloW0rld
+    depends_on:
+      - redis7
+
+  redis1:
+    image: arm32v7/redis
+
+  redis2:
+    image: arm32v7/redis
+    depends_on:
+      - node1
+
+  redis3:
+    image: arm32v7/redis
+    depends_on:
+      - node2
+
+  redis4:
+    image: arm32v7/redis
+    depends_on:
+      - node3
+
+  redis5:
+    image: arm32v7/redis
+    depends_on:
+      - node4
+
+  redis6:
+    image: arm32v7/redis
+    depends_on:
+      - node5
+
+  redis7:
+    image: arm32v7/redis
+    depends_on:
+      - node6
+
+volumes:
+  ccache-data:

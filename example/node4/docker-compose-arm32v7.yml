@@ -115,8 +115,6 @@ services:
   redis2:
     image: arm32v7/redis
     depends_on:
-      - redis1
-      - postgres1
       - node1
 
   redis3:

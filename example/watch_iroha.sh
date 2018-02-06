@@ -6,6 +6,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+SYSLOG=0		# 1=enable 0=disable syslog message
 
 if [ $# -ge 1 ]; then
   INSTANCE_NO=$1
@@ -13,7 +14,11 @@ else
   INSTANCE_NO=${INSTANCE_NO:-4}
 fi
 
-WATCH_INTERVAL=3
+if [ $# -ge 2 ]; then
+  WATCH_INTERVAL=$2
+else
+  WATCH_INTERVAL=${WATCH_INTERVAL:-3}
+fi
 
 PROJECT=$(grep COMPOSE_PROJECT_NAME .env | cut -d'=' -f2)
 
@@ -23,21 +28,34 @@ else
   COMPOSE=docker-compose.yml
 fi
 
-function stop_iroha {
-  if docker ps | grep -q ${PROJECT}_node${FAILED_INSTANCE}_1; then
-    echo "# docker stop ${PROJECT}_node${FAILED_INSTANCE}_1"
-    docker stop ${PROJECT}_node${FAILED_INSTANCE}_1
-  fi
-  if docker ps | grep -q ${PROJECT}_postgres${FAILED_INSTANCE}_1; then
-    echo "# docker stop ${PROJECT}_postgres${FAILED_INSTANCE}_1"
-    docker stop ${PROJECT}_postgres${FAILED_INSTANCE}_1
-  fi
-  if docker ps | grep -q ${PROJECT}_redis${FAILED_INSTANCE}_1; then
-    echo "# docker stop ${PROJECT}_redis${FAILED_INSTANCE}_1"
-    docker stop ${PROJECT}_redis${FAILED_INSTANCE}_1
+#
+# Syslog messages
+#
+function syslog {
+  LEVEL=$1
+  shift
+
+  echo "$(date +'%b %d %H:%M:%S') $(hostname) user.${LEVEL}: $*"
+  if [ ${SYSLOG} -eq 1 ]; then
+    logger -p user.${LEVEL} "$*"
   fi
 }
 
+#
+# Stop Iroha containers
+#
+function stop_iroha {
+  for container in node postgres redis; do
+    if docker ps | grep -q ${PROJECT}_${container}${FAILED_INSTANCE}_1; then
+      echo "# docker stop ${PROJECT}_${container}${FAILED_INSTANCE}_1"
+      docker stop ${PROJECT}_${container}${FAILED_INSTANCE}_1
+    fi
+  done
+}
+
+#
+# Start Iroha containers
+#
 function start_iroha {
   DIR=$(pwd)
   cd node${INSTANCE_NO}
@@ -46,26 +64,36 @@ function start_iroha {
   cd ${DIR}
 }
 
+#
+# Wait until the container starts up
+#
+for i in $(seq ${INSTANCE_NO}); do
+  for container in redis postgres node; do
+    while true; do
+      if docker ps | grep -q ${PROJECT}_${container}${i}_1; then
+        break
+      fi
+      sleep 1
+    done
+    syslog info "${PROJECT}_${container}${i} started up."
+  done
+done
+
+#
+# Watchdog Iroha containers
+#
+syslog info "INFO Watchdog started redis, postgres, iroha ${INSTANCE_NO} instances."
+
 while true; do
   for i in $(seq ${INSTANCE_NO}); do
-    if ! docker ps | grep -q ${PROJECT}_redis${i}_1; then
-      echo "ERROR ${PROJECT}_redis${i}_1 stopped!!"
-      FAILED_INSTANCE=${i}
-      stop_iroha
-      start_iroha
-    fi
-    if ! docker ps | grep -q ${PROJECT}_postgres${i}_1; then
-      echo "ERROR ${PROJECT}_postgres${i}_1 stopped!!"
-      FAILED_INSTANCE=${i}
-      stop_iroha
-      start_iroha
-    fi
-    if ! docker ps | grep -q ${PROJECT}_node${i}_1; then
-      FAILED_INSTANCE=${i}
-      echo "ERROR ${PROJECT}_node${i}_1 stopped!!"
-      stop_iroha
-      start_iroha
-    fi
+    for container in redis postgres node; do
+      if ! docker ps | grep -q ${PROJECT}_${container}${i}_1; then
+        syslog err "${PROJECT}_${container}${i}_1 stopped."
+        FAILED_INSTANCE=${i}
+        stop_iroha
+        start_iroha
+      fi
+    done
   done
 
   sleep ${WATCH_INTERVAL}

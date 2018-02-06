@@ -50,8 +50,15 @@ help:
 	@echo "all (default) - buid iroha-dev container, and build iroha"
 	@echo "up            - running iroha container by docker-compose"
 	@echo "down          - stop and remove iroha container by docker-compose"
-	@echo "test          - exec test commands"
 	@echo "logs          - show logs of iroha_node_1 container"
+	@echo "test          - exec test commands"
+	@echo "up4           - running iroha container by docker-compose (4 nodes)"
+	@echo "down4         - stop and remove iroha container by docker-compose (4 nodes)"
+	@echo "logs4         - show logs of iroha_node_1 container (4 nodes)"
+	@echo "up7           - running iroha container by docker-compose (7 nodes)"
+	@echo "down7         - stop and remove iroha container by docker-compose (7 nodes)"
+	@echo "logs7         - show logs of iroha_node_1 container (7 nodes)"
+	@echo "version       - show labels in container"
 
 up:
 	cd example; docker-compose -p $(COMPOSE_PROJECT_NAME) -f $(COMPOSE) up -d
@@ -82,3 +89,6 @@ logs7:
 
 test:
 	cd example; bash test.sh
+
+version:
+	docker inspect -f {{.Config.Labels}} $(PROJECT)/$(IROHA_IMG)

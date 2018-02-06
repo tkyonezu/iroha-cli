@@ -47,7 +47,7 @@ function syslog {
 function stop_iroha {
   for container in node postgres redis; do
     if docker ps | grep -q ${PROJECT}_${container}${FAILED_INSTANCE}_1; then
-      echo "# docker stop ${PROJECT}_${container}${FAILED_INSTANCE}_1"
+      syslog info "# docker stop ${PROJECT}_${container}${FAILED_INSTANCE}_1"
       docker stop ${PROJECT}_${container}${FAILED_INSTANCE}_1
     fi
   done
@@ -59,7 +59,7 @@ function stop_iroha {
 function start_iroha {
   DIR=$(pwd)
   cd node${INSTANCE_NO}
-  echo "# docker-compose -p ${PROJECT} -f ${COMPOSE} up -d"
+  syslog info "# docker-compose -p ${PROJECT} -f ${COMPOSE} up -d"
   docker-compose -p ${PROJECT} -f ${COMPOSE} up -d
   cd ${DIR}
 }
@@ -82,7 +82,7 @@ done
 #
 # Watchdog Iroha containers
 #
-syslog info "INFO Watchdog started redis, postgres, iroha ${INSTANCE_NO} instances."
+syslog info "Watchdog started ${INSTANCE_NO} instance of redis, postgres, iroha."
 
 while true; do
   for i in $(seq ${INSTANCE_NO}); do

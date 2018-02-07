@@ -14,6 +14,7 @@
 
 .PHONY: all up down logs test
 
+IROHA_IMG := $(shell grep IROHA_IMG .env | cut -d"=" -f2)
 COMPOSE_PROJECT_NAME := $(shell grep COMPOSE_PROJECT_NAME example/.env | cut -d'=' -f2)
 
 UKERNEL := $(shell uname -s)

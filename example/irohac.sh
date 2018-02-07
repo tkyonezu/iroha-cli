@@ -7,11 +7,15 @@
 #
 
 if [ $# -lt 2 ]; then
-  echo "Usage: irohac <creatour_accout> <command> [<args>]" >&2
+  echo "Usage: irohac <creator_accout> <command> [<args>]" >&2
   exit 1
 fi
 
-PROJECT=hyperledger
+if [ "$(uname -m)" = "armv7l" ]; then
+  PROJECT=arm32v7
+else
+  PROJECT=hyperledger
+fi
 
 # Change localhost to Iroha's real IP address
 IROHA_HOST=localhost:50051

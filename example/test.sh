@@ -7,7 +7,8 @@
 #
 
 # Change localhost to Iroha's real IP address
-IROHA_HOST=localhost:50051
+## IROHA_HOST=localhost:50051
+IROHA_HOST=$(docker network inspect bridge | grep Gateway | awk '{ print $2 }' | sed 's/"//g'):50051
 
 ADMIN_ID=admin@test
 DOMAIN_ID=iroha

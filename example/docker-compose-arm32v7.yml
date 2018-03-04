@@ -23,7 +23,6 @@ services:
       --genesis_block config/genesis.block
       --keypair_name config/node0"
     depends_on:
-      - redis
       - postgres
 
   postgres:
@@ -31,11 +30,6 @@ services:
     environment:
       - POSTGRES_USER=iroha
       - POSTGRES_PASSWORD=HelloW0rld
-    depends_on:
-      - redis
-
-  redis:
-    image: arm32v7/redis
 
 volumes:
   ccache-data:

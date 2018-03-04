@@ -19,11 +19,8 @@ services:
     working_dir: /opt/iroha
     command: >
       bash -c "sleep 5;
-      /opt/iroha/bin/irohad --config config/iroha.conf
-      --genesis_block config/genesis.block
-      --keypair_name config/node0"
+      su - iroha -c /opt/iroha/config/run-iroha.sh"
     depends_on:
-      - redis
       - postgres
 
   postgres:
@@ -31,11 +28,6 @@ services:
     environment:
       - POSTGRES_USER=iroha
       - POSTGRES_PASSWORD=HelloW0rld
-    depends_on:
-      - redis
-
-  redis:
-    image: redis:3.2.8
 
 volumes:
   ccache-data:

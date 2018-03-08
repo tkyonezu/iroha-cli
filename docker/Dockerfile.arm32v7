@@ -11,7 +11,7 @@ RUN apt -y install cmake gcc g++ git \
     python3 python3-pip \
  && apt -y clean
 
-RUN git clone https://github.com/MizukiSonoko/iroha-cli.git \
+RUN git clone -b feature/fix-crypto_ed25519.py https://github.com/tkyonezu/iroha-cli.git \
  && cd iroha-cli; \
     pip3 install -r requirements.txt \
  && python3 setup.py install \

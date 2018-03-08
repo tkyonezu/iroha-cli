@@ -15,7 +15,8 @@ def generate_keypair_ed25519():
 
 
 def sign_ed25519(key_pair, message):
-    m = bytearray.fromhex(message.decode('utf-8'))
+##  m = bytearray.fromhex(message.decode('utf-8'))
+    m = message
     return ed25519.sign(m, key_pair.public_key, key_pair.private_key)
 
 

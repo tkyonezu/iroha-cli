@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-.PHONY: all up down logs test
+.PHONY: all setup docker up down logs test
 
 IROHA_IMG := $(shell grep IROHA_IMG .env | cut -d"=" -f2)
 COMPOSE_PROJECT_NAME := $(shell grep COMPOSE_PROJECT_NAME example/.env | cut -d'=' -f2)
@@ -43,12 +43,19 @@ ifeq ($(DOCKER), )
 $(error This platform "$(UKERNEL)/$(UMACHINE)" in not supported.)
 endif
 
-all:
+all: setup
+
+setup:
+	sudo bash setup.sh
+
+docker:
 	cd docker; docker build --rm -t $(PROJECT)/irohac -f $(DOCKER) .
 
 help:
 	@echo "help          - show make targets"
 	@echo "all (default) - buid iroha-dev container, and build iroha"
+	@echo "setup         - setup irohac on local host"
+	@echo "docker        - build irohac container"
 	@echo "up            - running iroha container by docker-compose"
 	@echo "down          - stop and remove iroha container by docker-compose"
 	@echo "logs          - show logs of iroha_node_1 container"

@@ -35,7 +35,7 @@ function send {
   docker run -t --rm --name irohac -v $(pwd):/root/.irohac ${PROJECT}/irohac irohac --hostname=${IROHA_HOST} --account_id=${CREATOR_ID} $*
 }
 
-rm -f ${USER1_ID}* ${USER2_ID}*
+sudo rm -f ${USER1_ID}* ${USER2_ID}*
 
 send ${ADMIN_ID} CreateDomain --default_role user --domain_id ${DOMAIN_ID}
 

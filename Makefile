@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-.PHONY: all setup docker up down logs test
+.PHONY: all setup docker up down logs test test-local test-docker
 
 IROHA_IMG := $(shell grep IROHA_IMG .env | cut -d"=" -f2)
 COMPOSE_PROJECT_NAME := $(shell grep COMPOSE_PROJECT_NAME example/.env | cut -d'=' -f2)
@@ -59,7 +59,8 @@ help:
 	@echo "up            - running iroha container by docker-compose"
 	@echo "down          - stop and remove iroha container by docker-compose"
 	@echo "logs          - show logs of iroha_node_1 container"
-	@echo "test          - exec test commands"
+	@echo "test          - exec test commands (local)"
+	@echo "test-docker   - exec test commands (docker)"
 	@echo "up4           - running iroha container by docker-compose (4 nodes)"
 	@echo "down4         - stop and remove iroha container by docker-compose (4 nodes)"
 	@echo "logs4         - show logs of iroha_node_1 container (4 nodes)"
@@ -69,6 +70,7 @@ help:
 	@echo "version       - show labels in container"
 
 up:
+	@cd example; if ! test -d block_store; then mkdir block_store; fi
 	cd example; docker-compose -p $(COMPOSE_PROJECT_NAME) -f $(COMPOSE) up -d
 
 down:
@@ -96,7 +98,12 @@ logs7:
 	cd example/node7; bash logs7.sh
 
 test:
-	cd example; bash test.sh
+	cd example; bash test-local.sh
+
+test-local: test
+
+test-docker:
+	cd example; bash test-docker.sh
 
 version:
 	docker inspect -f {{.Config.Labels}} $(PROJECT)/$(IROHA_IMG)

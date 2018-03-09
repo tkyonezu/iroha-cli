@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-.PHONY: all setup docker up down logs test test-local test-docker
+.PHONY: all setup docker up down logs logs1 up4 down4 logs4 up7 down7 logs7 test test-local test-docker version
 
 IROHA_IMG := $(shell grep IROHA_IMG .env | cut -d"=" -f2)
 COMPOSE_PROJECT_NAME := $(shell grep COMPOSE_PROJECT_NAME example/.env | cut -d'=' -f2)
@@ -59,6 +59,7 @@ help:
 	@echo "up            - running iroha container by docker-compose"
 	@echo "down          - stop and remove iroha container by docker-compose"
 	@echo "logs          - show logs of iroha_node_1 container"
+	@echo "logs1         - show logs of iroha_node1_1 container (multi)"
 	@echo "test          - exec test commands (local)"
 	@echo "test-docker   - exec test commands (docker)"
 	@echo "up4           - running iroha container by docker-compose (4 nodes)"
@@ -77,9 +78,11 @@ down:
 	cd example; docker-compose -p $(COMPOSE_PROJECT_NAME)  -f $(COMPOSE) down
 
 up4:
+	@cd example/node4; if ! test -d block_store1; then for i in 1 2 3 4; do mkdir block_store$$i; done; fi
 	cd example/node4; docker-compose -p $(COMPOSE_PROJECT_NAME) -f $(COMPOSE) up -d
 
 up7:
+	@cd example/node7; if ! test -d block_store1; then for i in 1 2 3 4 5 6 7; do mkdir block_store$$i; done; fi
 	cd example/node7; docker-compose -p $(COMPOSE_PROJECT_NAME) -f $(COMPOSE) up -d
 
 down4:
@@ -90,6 +93,9 @@ down7:
 
 logs:
 	docker logs -f iroha_node_1
+
+logs1:
+	docker logs -f iroha_node1_1
 
 logs4:
 	cd example/node4; bash logs4.sh
